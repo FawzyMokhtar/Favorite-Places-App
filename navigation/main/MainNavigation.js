@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { AllPlaces, NewPlace, PlaceDetails } from '../../screens';
+import { AllPlaces, NewPlace, PlaceDetails, FullMap } from '../../screens';
 import { HeaderRight } from '../../components';
 import { Colors } from '../../constants';
 
@@ -45,6 +45,13 @@ export function MainNavigation() {
             title: 'Place Details',
           }}
           component={PlaceDetails}
+        />
+        <Stack.Screen
+          name='map'
+          options={{
+            title: 'Map',
+          }}
+          component={FullMap}
         />
       </Stack.Navigator>
     </NavigationContainer>

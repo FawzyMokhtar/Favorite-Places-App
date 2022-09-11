@@ -1,31 +1,36 @@
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 import { PlacesList } from '../../components';
 import { Colors } from '../../constants';
 
-export function AllPlaces() {
-  const places = [
-    {
-      id: 1,
-      title: 'Riyadh Saudi Arabia',
-      address: 'Near the moon at sky on the universe',
-      imageUri:
-        'https://media.istockphoto.com/photos/buildingslandmarks-picture-id1293325404',
-    },
-  ];
+export function AllPlaces({ route }) {
+  const [loadedPlaces, setLoadedPlaces] = useState([]);
+
+  const isFocussed = useIsFocused();
+
+  useEffect(() => {
+    if (isFocussed && route.params?.place) {
+      setLoadedPlaces((currentPlaces) => [
+        route.params.place,
+        ...currentPlaces,
+      ]);
+    }
+  }, [isFocussed, route]);
 
   return (
     <>
-      {!places.length && (
+      {!loadedPlaces.length && (
         <View style={styles.noItemsContainer}>
           <Text style={styles.noItemsText}>
             You don't have any favorite places yet.
           </Text>
         </View>
       )}
-      {!!places.length && (
+      {!!loadedPlaces.length && (
         <View style={styles.container}>
-          <PlacesList places={places} />
+          <PlacesList places={loadedPlaces} />
         </View>
       )}
     </>

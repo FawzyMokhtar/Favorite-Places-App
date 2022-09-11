@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
 import {
-  EmptyPlaceholder,
-  FlatButton,
+  ImagePicker,
   Input,
+  LocationPicker,
   PrimaryButton,
 } from '../../components';
 import { Colors } from '../../constants';
+import { Place } from '../../models';
 
-export function NewPlace() {
+export function NewPlace({ navigation }) {
   const [form, setForm] = useState({
     title: '',
+    imageUri: null,
+    location: null,
   });
 
   function titleInputHandler(text) {
@@ -19,6 +22,39 @@ export function NewPlace() {
       ...currentForm,
       title: text,
     }));
+  }
+
+  function imageInputHandler(imageUri) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      imageUri,
+    }));
+  }
+
+  function locationInputHandler(location) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      location,
+    }));
+  }
+
+  function saveHandler() {
+    if (!form.title.trim() || !form.location) {
+      return Alert.alert(
+        'Required Data',
+        'You must enter the place title.\nAnd pick a location.',
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ]
+      );
+    }
+
+    const place = new Place(form.title.trim(), form.imageUri, form.location);
+
+    navigation.navigate('home', { place });
   }
 
   return (
@@ -41,14 +77,12 @@ export function NewPlace() {
             onChangeText: titleInputHandler,
           }}
         />
-        <EmptyPlaceholder message='No image taken yet.' />
-        <FlatButton icon='camera' text='Take image' />
-        <EmptyPlaceholder message='No location picked yet.' />
-        <View style={styles.inlineBtnsContainer}>
-          <FlatButton icon='location' text='Current location' />
-          <FlatButton icon='map' text='Pick on Map' />
-        </View>
-        <PrimaryButton icon='save' text='Add place' />
+        <ImagePicker onImagePicked={imageInputHandler} />
+        <LocationPicker
+          initialLocation={form.location}
+          onLocationPicked={locationInputHandler}
+        />
+        <PrimaryButton icon='save' text='Add place' onPress={saveHandler} />
       </View>
     </ScrollView>
   );
@@ -62,10 +96,5 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     paddingBottom: 32,
-  },
-  inlineBtnsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
 });

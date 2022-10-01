@@ -4,20 +4,25 @@ import { useIsFocused } from '@react-navigation/native';
 
 import { PlacesList } from '../../components';
 import { Colors } from '../../constants';
+import { Database } from '../../utils';
 
-export function AllPlaces({ route }) {
+export function AllPlaces() {
   const [loadedPlaces, setLoadedPlaces] = useState([]);
 
   const isFocussed = useIsFocused();
 
   useEffect(() => {
-    if (isFocussed && route.params?.place) {
-      setLoadedPlaces((currentPlaces) => [
-        route.params.place,
-        ...currentPlaces,
-      ]);
+    async function loadPlaces() {
+      try {
+        const places = await Database.getAllPlaces();
+        setLoadedPlaces(places);
+      } catch (error) {}
     }
-  }, [isFocussed, route]);
+
+    if (isFocussed) {
+      loadPlaces();
+    }
+  }, [isFocussed]);
 
   return (
     <>

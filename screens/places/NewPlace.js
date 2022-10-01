@@ -8,7 +8,7 @@ import {
   PrimaryButton,
 } from '../../components';
 import { Colors } from '../../constants';
-import { Place } from '../../models';
+import { Database } from '../../utils';
 
 export function NewPlace({ navigation }) {
   const [form, setForm] = useState({
@@ -38,7 +38,7 @@ export function NewPlace({ navigation }) {
     }));
   }
 
-  function saveHandler() {
+  async function saveHandler() {
     if (!form.title.trim() || !form.location) {
       return Alert.alert(
         'Required Data',
@@ -52,9 +52,23 @@ export function NewPlace({ navigation }) {
       );
     }
 
-    const place = new Place(form.title.trim(), form.imageUri, form.location);
+    try {
+      await Database.createPlace({
+        title: form.title.trim(),
+        imageUri: form.imageUri,
+        address: form.location.address,
+        latitude: form.location.latitude,
+        longitude: form.location.longitude,
+      });
 
-    navigation.navigate('home', { place });
+      navigation.navigate('home');
+    } catch (error) {
+      return Alert.alert(
+        `An error occurred`,
+        `Couldn't create the new place.`,
+        [{ text: 'Cancel', style: 'cancel' }]
+      );
+    }
   }
 
   return (

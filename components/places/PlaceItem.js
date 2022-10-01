@@ -16,7 +16,11 @@ export function PlaceItem({ place, onPress }) {
         <Image style={styles.img} source={{ uri: place.imageUri }} />
         <View style={styles.otherDetailsContainer}>
           <Text style={[styles.text, styles.title]}>{place.title}</Text>
-          <Text style={[styles.text, styles.address]}>{place.address}</Text>
+          <Text style={[styles.text, styles.address]}>
+            {place.address?.length
+              ? place.address
+              : 'No address for this place'}
+          </Text>
         </View>
       </Pressable>
     </View>
